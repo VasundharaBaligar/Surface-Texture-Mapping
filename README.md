@@ -1,82 +1,60 @@
-# Surface Texture Mapping & Neural Mesh Transfer
+# Neural Mesh Draping for Anatomical Completion
 
 ![Status](https://img.shields.io/badge/Status-Research_Showcase-blue)
 ![Domain](https://img.shields.io/badge/Domain-Medical_Imaging_%7C_3D_Vision-green)
 ![Tech](https://img.shields.io/badge/Tech-Neural_Fields_%7C_Python-orange)
 
-> **Note:** This repository serves as a documentation and result showcase for a research project on 3D surface mapping. Due to intellectual property constraints and the reliance on proprietary medical datasets, the source code is not publicly available.
+> **Note:** This repository showcases a research project on completing partial 3D medical scans. Due to the confidential nature of the medical datasets and pending publication, the source code is not publicly available.
 
-## 📄 Abstract
+## 🎯 Problem Statement: The "Impossible" Replication
+Replicating and analyzing human anatomical structures—specifically **Brain Ventricles**—is notoriously difficult. 
+* **The Challenge:** Medical scans (MRI/CT) often result in **incomplete meshes** or "partial point clouds" due to occlusion, scanning noise, or complex organic geometries.
+* **The Goal:** We needed a way to take a **broken/incomplete patient scan** and "complete" it by mapping it onto a pristine anatomical template, without losing the patient-specific deformities.
 
-Surface texture mapping is a critical task in computer graphics and medical imaging, allowing for the transfer of surface properties (appearance, texture, and fine geometry) from a source model to a target model. This project investigates and implements advanced parametrization-free techniques to solve the mapping problem between non-isometric shapes.
+## 💡 Solution: Neural Mesh Draping
+Standard geometric methods fail here because they require perfect, watertight meshes to work. We instead utilized **Mesh Draping (Neural Mesh Transfer)**.
 
-Specifically, we compare **Adaptive Triangularization** against **Mesh Draping (Neural Mesh Transfer)**. While traditional methods struggle with complex topologies, this research demonstrates the efficacy of Neural Fields (specifically Progressive Positional Encodings) in transferring fine-grained geometric details onto anatomical structures, such as **Brain Ventricles**.
-
-## 🔬 Methodology
-
-We explored two distinct approaches to solving the surface mapping problem:
-
-### 1. Adaptive Triangularization (Geometry-Based)
-* **Concept:** Computes bijective maps between genus-0 surfaces using common triangulations.
-* **Process:** Discretizes maps while maintaining bijective correspondence via spherical embeddings.
-* **Limitation:** Computationally expensive for high-resolution meshes and struggles with highly non-isometric deformations.
-
-### 2. Mesh Draping (Deep Learning-Based)
-* **Concept:** A parametrization-free method that "drapes" a source mesh over a target using a neural network.
-* **Core Architecture:** Utilizes **Implicit Neural Representations** and **Progressive Positional Encodings (PE)**.
-* **Advantage:** The progressive PE allows the network to capture high-frequency details (tiny geometric features) that standard fully connected networks often smooth over.
-
-![Methodology Comparison](assets/methodology_diagram.png)
-*Figure 1: Visual comparison of the Adaptive Triangularization pipeline vs. the Neural Mesh Draping workflow.*
+This technique uses a **parametrization-free neural network** to "drape" the incomplete source geometry over a complete target template. It essentially "learns" the missing topology from the template while preserving the fine surface details of the patient.
 
 ---
 
-## 🧠 Application: Medical Anatomy
+## 📸 Research Results
 
-The primary contribution of this research was the application of these techniques to **Artificial Human Organ Modeling**.
+### 1. Brain Ventricle Completion
+The core success of this project was recovering the full shape of a human brain ventricle from partial data.
 
-* **Dataset:** 3D Meshes of Human Brain Ventricles.
-* **Goal:** Map the surface texture and anomalies of a *known/scanned* ventricle model onto a *generic/artificial* ventricle model.
-* **Implementation:** * Automated the key-point mapping process between Source (Incomplete Ventricle) and Target.
-    * Optimized the neural network to minimize distortion during the transfer of ventricle walls.
+* **Input (Source):** An incomplete/broken mesh of a patient's ventricle.
+* **Target (Template):** A generic, complete ventricle model.
+* **Output:** A fully reconstructed, water-tight ventricle that retains the patient's specific surface features.
 
-## 📊 Results
+![Brain Ventricle Completion](assets/ventricle_results.png)
+*(Figure: The Neural Mesh Draping pipeline successfully completing the missing regions of the brain ventricle scan.)*
 
-We evaluated the performance on both standard graphical objects (ShapeNet) and medical data.
+### 2. Proof of Concept (ShapeNet)
+Before applying the method to medical data, we validated the "draping" capability on standard non-rigid shapes to ensure high-frequency detail preservation.
 
-### 1. General Shape Transfer
-Comparison of texture transfer on standard non-rigid shapes.
-
-| Source Mesh | Target Mesh | Result (Mesh Draping) |
-| :---: | :---: | :---: |
-| ![Plane Source](assets/plane_source.png) | ![Plane Target](assets/plane_target.png) | ![Plane Result](assets/plane_result.png) |
-
-### 2. Brain Ventricle Mapping
-Transferring surface details from a specific patient scan to a generic model.
-
-| Source (Patient Scan) | Target (Template) | Draped Output |
-| :---: | :---: | :---: |
-| ![Ventricle Source](assets/ventricle_source.png) | ![Ventricle Target](assets/ventricle_target.png) | ![Ventricle Result](assets/ventricle_result.png) |
-
-*Figure 2: The Neural Mesh Draping method successfully preserves the local curvature of the brain ventricle while adhering to the target topology.*
+![Standard Shape Validation](assets/draping_results.png)
+*(Figure: Validating the transfer of fine geometric details (e.g., feathers, engines) on standard 3D objects.)*
 
 ---
 
-## 🛠️ Key Contributions
+## 🛠️ Methodology & Contributions
 
-* **Comparative Analysis:** Conducted a rigorous comparison between geometry-based remeshing and neural-based draping.
-* **Pipeline Optimization:** Implemented an automated key-point saving mechanism in the Mesh Draping codebase to streamline the iterative training process.
-* **Medical Adaptation:** Successfully tuned the frequency bands of the Positional Encoding to handle the smooth, organic curvature of biological tissues (ventricles) rather than just sharp mechanical objects.
+### Why Mesh Draping?
+We moved away from traditional algorithms (like Adaptive Triangularization, which we surveyed but discarded) because they struggle with **non-isometric shapes** and **incomplete topology**.
+
+**My Technical Contributions:**
+1.  **Automated Key-Point Mapping:**
+    * The original Mesh Draping implementation required manual alignment for every new pair of shapes.
+    * I engineered an automated routine to detect, save, and map key correspondence points between the medical source and the template. This allowed us to run the pipeline on multiple patient scans without manual intervention.
+2.  **Medical Domain Adaptation:**
+    * Tuned the **Progressive Positional Encodings (PE)** to handle the smooth, organic curvature of biological tissue, ensuring the network didn't introduce artificial "sharpness" or noise into the medical model.
 
 ## 📚 References
+This work builds upon the architecture proposed in:
+* Hertz, A., et al. (2022). *Mesh Draping: Parametrization-Free Neural Mesh Transfer*.
 
-This work is based on and extends the following papers:
-
-1.  **Mesh Draping:** Hertz, A., Perel, O., Giryes, R., Sorkine-Hornung, O., & Cohen-Or, D. (2022). *Mesh Draping: Parametrization-Free Neural Mesh Transfer*.
-2.  **Adaptive Triangularization:** Schmidt, P., Pieper, D., & Kobbelt, L. (2023). *Surface Maps via Adaptive Triangulations*.
-
-## 📬 Contact
-
-For inquiries regarding the implementation details or the medical dataset usage, please contact:
-
-**Vasundhara V. Baligar** [Your Email / LinkedIn Link]
+## 👥 Contributors
+* **Vasundhara Baligar**
+* **Pratham Shanbhag**
+* **Guidance:** Prof. Subodh Kumar, Mr. Sukhraj Singh
