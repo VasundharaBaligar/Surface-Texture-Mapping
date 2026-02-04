@@ -4,12 +4,12 @@
 ![Domain](https://img.shields.io/badge/Domain-Medical_Imaging_%7C_3D_Vision-green)
 ![Tech](https://img.shields.io/badge/Tech-Neural_Fields_%7C_Python-orange)
 
-> **Note:** This repository showcases a research project on completing partial 3D medical scans. Due to the confidential nature of the medical datasets and pending publication, the source code is not publicly available.
+> **Note:** This repository showcases a research project on completing partial 3D medical scans. Due to the confidentiality, the source code is not publicly available.
 
 ## 🎯 Problem Statement: The "Impossible" Replication
-Replicating and analyzing human anatomical structures—specifically **Brain Ventricles**—is notoriously difficult. 
+Replicating and analyzing human anatomical structures, specifically **Brain Ventricles** is notoriously difficult. 
 * **The Challenge:** Medical scans (MRI/CT) often result in **incomplete meshes** or "partial point clouds" due to occlusion, scanning noise, or complex organic geometries.
-* **The Goal:** We needed a way to take a **broken/incomplete patient scan** and "complete" it by mapping it onto a pristine anatomical template, without losing the patient-specific deformities.
+* **The Goal:** We needed a way to take a **broken/incomplete scan** and "complete" it by mapping it onto a pristine anatomical template, without deformations.
 
 ## 💡 Solution: Neural Mesh Draping
 Standard geometric methods fail here because they require perfect, watertight meshes to work. We instead utilized **Mesh Draping (Neural Mesh Transfer)**.
@@ -23,18 +23,21 @@ This technique uses a **parametrization-free neural network** to "drape" the inc
 ### 1. Brain Ventricle Completion
 The core success of this project was recovering the full shape of a human brain ventricle from partial data.
 
-* **Input (Source):** An incomplete/broken mesh of a patient's ventricle.
+* **Input (Source):** An incomplete/broken mesh of ventricle.
 * **Target (Template):** A generic, complete ventricle model.
-* **Output:** A fully reconstructed, water-tight ventricle that retains the patient's specific surface features.
+* **Output:** A fully reconstructed, water-tight ventricle that retains the specific surface features.
 
-![Brain Ventricle Completion](assets/ventricle_results.png)
-*(Figure: The Neural Mesh Draping pipeline successfully completing the missing regions of the brain ventricle scan.)*
+## 📸 Research Results: Anatomical Completion
 
-### 2. Proof of Concept (ShapeNet)
-Before applying the method to medical data, we validated the "draping" capability on standard non-rigid shapes to ensure high-frequency detail preservation.
+### 1. Input: Incomplete Source Mesh
+The raw input mesh often contains missing geometry and broken topology, making standard analysis impossible.
 
-![Standard Shape Validation](assets/draping_results.png)
-*(Figure: Validating the transfer of fine geometric details (e.g., feathers, engines) on standard 3D objects.)*
+![Input Scan](assets/ip.png)
+
+### 2. Output: Neural Reconstruction
+Our **Mesh Draping** pipeline "drapes" the template over the incomplete input. It fills the holes and recovers the full shape while perfectly preserving the unique curvature and fine details of the original source.
+
+![Output Result](assets/op.png)
 
 ---
 
@@ -43,18 +46,15 @@ Before applying the method to medical data, we validated the "draping" capabilit
 ### Why Mesh Draping?
 We moved away from traditional algorithms (like Adaptive Triangularization, which we surveyed but discarded) because they struggle with **non-isometric shapes** and **incomplete topology**.
 
-**My Technical Contributions:**
-1.  **Automated Key-Point Mapping:**
-    * The original Mesh Draping implementation required manual alignment for every new pair of shapes.
-    * I engineered an automated routine to detect, save, and map key correspondence points between the medical source and the template. This allowed us to run the pipeline on multiple patient scans without manual intervention.
-2.  **Medical Domain Adaptation:**
-    * Tuned the **Progressive Positional Encodings (PE)** to handle the smooth, organic curvature of biological tissue, ensuring the network didn't introduce artificial "sharpness" or noise into the medical model.
+## Extensions
+
+We augmented the baseline *Mesh Draping* implementation to address the specific constraints of medical imaging:
+
+1.  **Automated Key-Point Registration:** To overcome the bottleneck of manual alignment in the original implementation, we integrated a routine that automatically maps and persists correspondence points between the source scan and the template.
+2.  **Scalability:**
+    This addition allows the pipeline to generalize across multiple patient datasets without requiring "human-in-the-loop" annotation for each iteration.
+
 
 ## 📚 References
 This work builds upon the architecture proposed in:
 * Hertz, A., et al. (2022). *Mesh Draping: Parametrization-Free Neural Mesh Transfer*.
-
-## 👥 Contributors
-* **Vasundhara Baligar**
-* **Pratham Shanbhag**
-* **Guidance:** Prof. Subodh Kumar, Mr. Sukhraj Singh
