@@ -4,7 +4,7 @@
 ![Domain](https://img.shields.io/badge/Domain-Medical_Imaging_%7C_3D_Vision-green)
 ![Tech](https://img.shields.io/badge/Tech-Neural_Fields_%7C_Python-orange)
 
-> **Note:** This repository showcases a research project on completing partial 3D medical scans. Due to the confidentiality, the source code is not publicly available.
+> **Note:** This repository showcases a research project conducted during my summer internship at **IIT Delhi** (Department of Computer Science & Engineering). Due to lab protocols and pending publication, the source code is currently private.
 
 ## 🎯 Problem Statement: The "Impossible" Replication
 Replicating and analyzing human anatomical structures, specifically **Brain Ventricles** is notoriously difficult. 
@@ -32,12 +32,12 @@ The core success of this project was recovering the full shape of a human brain 
 ### 1. Input: Incomplete Source Mesh
 The raw input mesh often contains missing geometry and broken topology, making standard analysis impossible.
 
-![Input Scan](assets/ip.png)
+![Input Scan](ip.png)
 
 ### 2. Output: Neural Reconstruction
-Our **Mesh Draping** pipeline "drapes" the template over the incomplete input. It fills the holes and recovers the full shape while perfectly preserving the unique curvature and fine details of the original source.
+Our **Mesh Draping** pipeline "drapes" the template over the incomplete input. It adapts the geometry and recovers the full shape while perfectly preserving the unique curvature and fine details of the original source.
 
-![Output Result](assets/op.png)
+![Output Result](op.png)
 
 ---
 
